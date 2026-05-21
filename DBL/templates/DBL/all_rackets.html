@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+This is all racket page
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Search</button>
+</form>
+
+{% if rackets %}
+<h2>This racket belongs to these types:</h2>
+<ul>
+    {% for type in rackets %}
+    <li>{{ type.name }} - {{ type.description }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% endblock content %}

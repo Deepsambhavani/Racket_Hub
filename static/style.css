@@ -1,0 +1,10 @@
+body{
+    background-color: rgb(226, 165, 43);
+    color: #000;
+    text-align: center;
+}
+p{
+    text-align: justify;
+    font-size: 20px;
+    border: 2px dotted black;
+}
