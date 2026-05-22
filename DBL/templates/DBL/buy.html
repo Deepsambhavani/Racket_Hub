@@ -159,4 +159,70 @@
         </div>
     </div>
 </div>
+<div class="max-w-5xl mx-auto mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 text-gray-100 px-4 pb-12">
+    
+    <div class="bg-[#141722] border border-gray-800/60 rounded-2xl p-6 shadow-xl">
+        <h3 class="text-lg font-bold mb-4 flex items-center gap-2 text-gray-200">
+            <span>💬 Player Reviews</span>
+            <span class="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full font-mono">
+                {{ reviews|length }}
+            </span>
+        </h3>
+        
+        <div class="space-y-4 max-h-[380px] overflow-y-auto pr-2 custom-scrollbar">
+            {% for review in reviews %}
+            <div class="bg-[#1a1f2c]/50 border border-gray-800/40 p-4 rounded-xl">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="font-medium text-orange-500 text-sm">{{ review.user_name }}</span>
+                    <span class="text-xs text-yellow-400 font-bold bg-yellow-400/10 px-2 py-0.5 rounded-md border border-yellow-400/20">
+                        ★ {{ review.rating }}/5
+                    </span>
+                </div>
+                <p class="text-xs text-gray-400 leading-relaxed">{{ review.comment }}</p>
+            </div>
+            {% empty %}
+            <div class="text-center py-12 text-gray-600 text-sm border border-dashed border-gray-800/40 rounded-xl">
+                No reviews yet for this model. Be the first to add yours!
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="bg-[#141722] border border-gray-800/60 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+        <div>
+            <h3 class="text-lg font-bold mb-1 text-gray-200">Leave a Review</h3>
+            <p class="text-xs text-gray-500 mb-4">Tested this racket on court? Share your setup and thoughts.</p>
+        </div>
+        
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            
+            <div>
+                <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Your Name</label>
+                {{ form.user_name }}
+            </div>
+            
+            <div>
+                <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Racket Rating</label>
+                {{ form.rating }}
+            </div>
+            
+            <div>
+                <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Comments</label>
+                {{ form.comment }}
+            </div>
+            
+            <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold text-sm py-3 px-4 rounded-xl transition duration-150 transform active:scale-[0.99] shadow-md shadow-orange-900/20">
+                Post Review 🚀
+            </button>
+        </form>
+    </div>
+</div>
+
+<style>
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 99px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #ea580c; }
+</style>
 {% endblock content %}

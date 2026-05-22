@@ -1,17 +1,31 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from .models import rackets , racket_reviews , racket_type , LaserSerial
 from django.shortcuts import get_object_or_404
-from .forms import racketform
+from .forms import ReviewForm, racketform
 # Create your views here.
 def DBl(request):
     all_rackets = rackets.objects.all()
     return render(request, 'DBL/DBL.html', {'rackets': all_rackets})
 def buy_racket(request, racket_id):
-    racket = get_object_or_404(rackets, pk= racket_id)
-    racket_reviews = racket.reviews.all()
+    racket = get_object_or_404(rackets, id=racket_id)
+    reviews = racket.reviews.all()
     
-    return render(request, 'DBL/buy.html', {'racket': racket  } )
-
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            new_review = form.save(commit=False)
+            new_review.racket = racket 
+            new_review.save()
+            return redirect('view_racket', racket_id=racket.id)
+    else:
+        form = ReviewForm()
+        
+    context = {
+        'racket': racket,
+        'reviews': reviews,
+        'form': form,
+    }
+    return render(request, 'DBL/buy.html', context)
 def all_rackets(request):
     stores = None
     if request.method == 'POST':
