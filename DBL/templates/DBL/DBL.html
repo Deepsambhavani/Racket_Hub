@@ -146,6 +146,7 @@
                         <div class="card-price-label">Price</div>
                         <div class="card-price">₹{{ racket.pricing }}</div>
                     </div>
+                    <a href="{%url 'view_racket' racket.id %}" class="btn-buy">View Details</a>
                     <a href="{% url 'buy' racket.id %}" class="btn-buy">Buy Now</a>
                 </div>
             </div>

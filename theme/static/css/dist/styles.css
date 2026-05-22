@@ -248,8 +248,14 @@
   .flex {
     display: flex;
   }
+  .h-16 {
+    height: calc(var(--spacing) * 16);
+  }
   .h-screen {
     height: 100vh;
+  }
+  .w-16 {
+    width: calc(var(--spacing) * 16);
   }
   .transform {
     transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
@@ -269,6 +275,9 @@
   }
   .bg-gray-50 {
     background-color: var(--color-gray-50);
+  }
+  .object-contain {
+    object-fit: contain;
   }
   .font-mono {
     font-family: var(--font-mono);

@@ -1,103 +1,110 @@
-{% extends "layout.html" %}
+    {% extends "layout.html" %}
 
-{% block title %}Find by Brand — RacketHub{% endblock title %}
+    {% block title %}Find by Brand — RacketHub{% endblock title %}
 
-{% block content %}
-<style>
-    .search-page { padding: 3rem 2rem; max-width: 800px; margin: 0 auto; }
-    .page-eyebrow {
-        font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em;
-        text-transform: uppercase; color: var(--clr-accent); margin-bottom: 0.6rem;
-    }
-    .page-title {
-        font-family: 'Bebas Neue', sans-serif;
-        font-size: clamp(2rem, 5vw, 3.5rem);
-        color: #fff; letter-spacing: 0.03em;
-    }
-    .page-sub { color: var(--clr-muted); margin-top: 0.5rem; font-size: 0.9rem; margin-bottom: 2.5rem; }
+    {% block content %}
+    <style>
+        .search-page { padding: 3rem 2rem; max-width: 800px; margin: 0 auto; }
+        .page-eyebrow {
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em;
+            text-transform: uppercase; color: var(--clr-accent); margin-bottom: 0.6rem;
+        }
+        .page-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            color: #fff; letter-spacing: 0.03em;
+        }
+        .page-sub { color: var(--clr-muted); margin-top: 0.5rem; font-size: 0.9rem; margin-bottom: 2.5rem; }
 
-    .search-card {
-        background: var(--clr-card);
-        border: 1px solid var(--clr-border);
-        border-radius: 16px; padding: 2rem;
-        margin-bottom: 2.5rem;
-    }
-    .search-card label {
-        display: block; font-size: 0.75rem; font-weight: 700;
-        text-transform: uppercase; letter-spacing: 0.1em;
-        color: var(--clr-muted); margin-bottom: 0.6rem;
-    }
-    .search-card select {
-        width: 100%; background: var(--clr-bg);
-        border: 1px solid var(--clr-border); border-radius: 10px;
-        color: var(--clr-text); font-size: 0.9rem; font-family: 'DM Sans', sans-serif;
-        padding: 0.8rem 1rem; outline: none;
-        transition: border-color 0.2s;
-        -webkit-appearance: none; appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-        background-repeat: no-repeat; background-position: right 1rem center;
-    }
-    .search-card select:focus { border-color: var(--clr-accent); }
-    .search-card select option { background: #1a1e2a; }
+        .search-card {
+            background: var(--clr-card);
+            border: 1px solid var(--clr-border);
+            border-radius: 16px; padding: 2rem;
+            margin-bottom: 2.5rem;
+        }
+        .search-card label {
+            display: block; font-size: 0.75rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.1em;
+            color: var(--clr-muted); margin-bottom: 0.6rem;
+        }
+        .search-card select {
+            width: 100%; background: var(--clr-bg);
+            border: 1px solid var(--clr-border); border-radius: 10px;
+            color: var(--clr-text); font-size: 0.9rem; font-family: 'DM Sans', sans-serif;
+            padding: 0.8rem 1rem; outline: none;
+            transition: border-color 0.2s;
+            -webkit-appearance: none; appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 1rem center;
+        }
+        .search-card select:focus { border-color: var(--clr-accent); }
+        .search-card select option { background: #1a1e2a; }
 
-    .search-btn {
-        margin-top: 1.25rem; width: 100%;
-        background: var(--clr-accent); color: #fff; border: none;
-        font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em;
-        text-transform: uppercase; padding: 0.9rem;
-        border-radius: 10px; cursor: pointer;
-        transition: background 0.2s; font-family: 'DM Sans', sans-serif;
-    }
-    .search-btn:hover { background: #c93820; }
+        .search-btn {
+            margin-top: 1.25rem; width: 100%;
+            background: var(--clr-accent); color: #fff; border: none;
+            font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em;
+            text-transform: uppercase; padding: 0.9rem;
+            border-radius: 10px; cursor: pointer;
+            transition: background 0.2s; font-family: 'DM Sans', sans-serif;
+        }
+        .search-btn:hover { background: #c93820; }
 
-    /* Results */
-    .results-label {
-        font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em;
-        text-transform: uppercase; color: var(--clr-accent); margin-bottom: 1rem;
-    }
-    .result-item {
-        background: var(--clr-card); border: 1px solid var(--clr-border);
-        border-radius: 12px; padding: 1.25rem 1.5rem;
-        display: flex; align-items: center; justify-content: space-between;
-        margin-bottom: 0.75rem; transition: border-color 0.2s;
-    }
-    .result-item:hover { border-color: rgba(232,69,42,0.3); }
-    .result-name { font-weight: 700; color: #fff; font-size: 0.95rem; }
-    .result-desc { font-size: 0.8rem; color: var(--clr-muted); margin-top: 0.2rem; }
-    .result-arrow { color: var(--clr-muted); font-size: 1.2rem; }
-</style>
+        /* Results */
+        .results-label {
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em;
+            text-transform: uppercase; color: var(--clr-accent); margin-bottom: 1rem;
+        }
+        .result-item {
+            background: var(--clr-card); border: 1px solid var(--clr-border);
+            border-radius: 12px; padding: 1.25rem 1.5rem;
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 0.75rem; transition: border-color 0.2s;
+        }
+        .result-image {
 
-<div class="search-page">
-    <div class="page-eyebrow">Browse by Brand</div>
-    <h1 class="page-title">Find Your Racket</h1>
-    <p class="page-sub">Select a brand to see which rackets belong to that category.</p>
+        }
+        .result-item:hover { border-color: rgba(232,69,42,0.3); }
+        .result-name { font-weight: 700; color: #fff; font-size: 0.95rem; }
+        .result-desc { font-size: 0.8rem; color: var(--clr-muted); margin-top: 0.2rem; }
+        .result-arrow { color: var(--clr-muted); font-size: 1.2rem; }
+    </style>
 
-    <div class="search-card">
-        <form method="POST">
-            {% csrf_token %}
-            {% for field in form %}
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-            {% endfor %}
-            <button type="submit" class="search-btn">Search Rackets →</button>
-        </form>
-    </div>
+    <div class="search-page">
+        <div class="page-eyebrow">Browse by Brand</div>
+        <h1 class="page-title">Find Your Racket</h1>
+        <p class="page-sub">Select a brand to see which rackets belong to that category.</p>
 
-    {% if rackets %}
-    <div class="results-label">{{ rackets|length }} result{{ rackets|length|pluralize }} found</div>
-    {% for racket in rackets %}
-    <div class="result-item">
+        <div class="search-card">
+            <form method="POST">
+                {% csrf_token %}
+                {% for field in form %}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                {% endfor %}
+                <button type="submit" class="search-btn">Search Rackets →</button>
+            </form>
+        </div>
+
+        {% if rackets %}
+        <div class="results-label">{{ rackets|length }} result{{ rackets|length|pluralize }} found</div>
+        {% for racket in rackets %}
+        <div class="result-item">
+        {% if racket.image %}
+            <img src="{{ racket.image.url }}" class="w-16 h-16 object-contain">
+        {% endif %}
         <div>
             <div class="result-name">{{ racket.name }}</div>
             <div class="result-desc">{{ racket.description|truncatechars:80 }}</div>
+            
         </div>
-        <div class="result-arrow">→</div>
+        </div>
+
+        {% endfor %}
+        {% elif request.method == "POST" %}
+        <div style="text-align: center; padding: 3rem; color: var(--clr-muted); font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;">
+            No rackets found for that brand.
+        </div>
+        {% endif %}
     </div>
-    {% endfor %}
-    {% elif request.method == "POST" %}
-    <div style="text-align: center; padding: 3rem; color: var(--clr-muted); font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;">
-        No rackets found for that brand.
-    </div>
-    {% endif %}
-</div>
-{% endblock content %}
+    {% endblock content %}
