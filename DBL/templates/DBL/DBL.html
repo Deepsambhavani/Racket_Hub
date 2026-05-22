@@ -1,66 +1,186 @@
 {% extends "layout.html" %}
 
-{% block title %}Our Racket Collection{% endblock title %}
+{% block title %}Collection — RacketHub{% endblock title %}
 
 {% block content %}
-<div class="min-h-screen bg-slate-950 py-12 px-4 sm:px-6 lg:px-8 font-sans antialiased text-slate-100">
-    
-    <div class="max-w-7xl mx-auto text-center mb-16">
-        <h1 class="text-4xl font-black tracking-wider uppercase bg-gradient-to-r from-red-500 via-orange-500 to-yellow-400 bg-clip-text text-transparent sm:text-6xl">
-            The Racket Vault
-        </h1>
-        <p class="mt-4 max-w-2xl mx-auto text-lg font-medium text-slate-400 tracking-wide italic">
-            Equip yourself with elite court weaponry. Built for speed, fueled by power.
-        </p>
-    </div>
+<style>
+    .page-header {
+        background: var(--clr-surface);
+        border-bottom: 1px solid var(--clr-border);
+        padding: 3.5rem 2rem 3rem;
+    }
+    .page-header-inner { max-width: 1280px; margin: 0 auto; }
+    .page-eyebrow {
+        font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em;
+        text-transform: uppercase; color: var(--clr-accent);
+        margin-bottom: 0.6rem;
+    }
+    .page-title {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: clamp(2.5rem, 6vw, 4.5rem);
+        color: #fff; letter-spacing: 0.03em; line-height: 1;
+    }
+    .page-sub { color: var(--clr-muted); margin-top: 0.6rem; font-size: 0.95rem; }
 
-    <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
+    /* Grid */
+    .collection-section { padding: 3rem 2rem; max-width: 1280px; margin: 0 auto; }
+    .rackets-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    /* Card */
+    .racket-card {
+        background: var(--clr-card);
+        border: 1px solid var(--clr-border);
+        border-radius: 20px; overflow: hidden;
+        display: flex; flex-direction: column;
+        transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+    }
+    .racket-card:hover {
+        border-color: rgba(232,69,42,0.4);
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(232,69,42,0.15);
+    }
+    .card-img {
+        background: var(--clr-bg);
+        height: 220px;
+        display: flex; align-items: center; justify-content: center;
+        padding: 2rem;
+        position: relative; overflow: hidden;
+        border-bottom: 1px solid var(--clr-border);
+    }
+    .card-img-glow {
+        position: absolute; inset: 0;
+        background: radial-gradient(circle at center, rgba(232,69,42,0.08) 0%, transparent 70%);
+        opacity: 0; transition: opacity 0.3s;
+    }
+    .racket-card:hover .card-img-glow { opacity: 1; }
+    .card-img img {
+        max-height: 100%; max-width: 100%; object-fit: contain;
+        position: relative; z-index: 1;
+        transition: transform 0.3s ease;
+    }
+    .racket-card:hover .card-img img { transform: scale(1.08); }
+    .card-no-img {
+        color: var(--clr-muted); font-size: 0.75rem; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 0.1em;
+    }
+    .card-body { padding: 1.5rem; display: flex; flex-direction: column; flex: 1; }
+    .card-brand {
+        font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em;
+        text-transform: uppercase; color: var(--clr-accent);
+        margin-bottom: 0.4rem;
+    }
+    .card-name {
+        font-weight: 700; font-size: 1.1rem; color: #fff;
+        letter-spacing: -0.01em; line-height: 1.3;
+    }
+    .card-desc {
+        font-size: 0.825rem; color: var(--clr-muted); line-height: 1.65;
+        margin-top: 0.6rem;
+        display: -webkit-box; -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical; overflow: hidden;
+        flex: 1;
+    }
+    .card-footer {
+        display: flex; align-items: center; justify-content: space-between;
+        margin-top: 1.25rem; padding-top: 1.25rem;
+        border-top: 1px solid var(--clr-border);
+    }
+    .card-price-label {
+        font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.12em; color: var(--clr-muted); margin-bottom: 0.2rem;
+    }
+    .card-price {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1.4rem; font-weight: 700; color: var(--clr-accent2);
+        letter-spacing: -0.02em;
+    }
+    .btn-buy {
+        background: var(--clr-accent); color: #fff;
+        text-decoration: none; display: inline-block;
+        font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+        text-transform: uppercase; padding: 0.6rem 1.2rem;
+        border-radius: 8px; transition: background 0.2s, transform 0.15s;
+        white-space: nowrap;
+    }
+    .btn-buy:hover { background: #c93820; transform: scale(1.03); }
+
+    .empty-state {
+        grid-column: 1/-1; text-align: center;
+        padding: 5rem 2rem; color: var(--clr-muted);
+    }
+    .empty-state span { font-size: 3rem; display: block; margin-bottom: 1rem; }
+    .empty-state p { font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; }
+</style>
+
+<div class="page-header">
+    <div class="page-header-inner">
+        <div class="page-eyebrow">Our Inventory</div>
+        <h1 class="page-title">Racket Collection</h1>
+        <p class="page-sub">Premium badminton rackets — find your perfect match.</p>
+    </div>
+</div>
+
+<div class="collection-section">
+    <div class="rackets-grid">
+
         {% for racket in rackets %}
-        <div class="bg-slate-900 rounded-3xl shadow-2xl border border-slate-800/80 overflow-hidden flex flex-col justify-between transform hover:-translate-y-2 hover:border-red-500/50 transition-all duration-300 ease-in-out group">
-            
-            <div class="bg-slate-950 h-64 flex items-center justify-center p-8 relative overflow-hidden border-b border-slate-800/50">
-                <div class="absolute inset-0 bg-red-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full blur-2xl scale-75"></div>
-                
+        <div class="racket-card">
+            <div class="card-img">
+                <div class="card-img-glow"></div>
                 {% if racket.image %}
-                    <img class="max-h-full max-w-full object-contain transform group-hover:scale-110 transition duration-300" src="{{ racket.image.url }}" alt="{{ racket.name }}">
+                    <img src="{{ racket.image.url }}" alt="{{ racket.name }}">
                 {% else %}
-                    <span class="text-slate-600 font-bold tracking-widest uppercase text-xs">No Gear Image</span>
+                    <span class="card-no-img">🏸 No Image</span>
                 {% endif %}
             </div>
-
-            <div class="p-6 flex flex-col flex-grow justify-between bg-gradient-to-b from-slate-900 to-slate-950">
-                <div>
-                    <h2 class="text-2xl font-black tracking-tight text-white uppercase group-hover:text-red-400 transition-colors duration-200 mb-2">
-                        {{ racket.name }}
-                    </h2>
-                    <p class="text-slate-400 text-sm leading-relaxed font-light line-clamp-3 mb-6">
-                        {{ racket.description }}
-                    </p>
-                </div>
-
-                <div>
-                    <div class="flex items-center justify-between pt-4 border-t border-slate-800/80">
-                        <div class="flex flex-col">
-                            <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Price</span>
-                            <span class="text-2xl font-black font-mono text-amber-400 tracking-tight">
-                                ₹{{ racket.pricing }}
-                            </span>
-                        </div>
-                        
-                        <a href="{% url 'buy' racket.id %}" 
-                           class="inline-flex items-center justify-center bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white text-xs font-black uppercase tracking-widest py-3 px-6 rounded-2xl shadow-lg shadow-red-600/20 active:scale-95 transition-all duration-150">
-                            Get Weapon
-                        </a>
+            <div class="card-body">
+                <div class="card-brand">{{ racket.get_type_display }}</div>
+                <div class="card-name">{{ racket.name }}</div>
+                <div class="card-desc">{{ racket.description }}</div>
+                <div class="card-footer">
+                    <div>
+                        <div class="card-price-label">Price</div>
+                        <div class="card-price">₹{{ racket.pricing }}</div>
                     </div>
+                    <a href="{% url 'buy' racket.id %}" class="btn-buy">Buy Now</a>
                 </div>
             </div>
-
-        </div> 
+        </div>
         {% empty %}
-        <div class="col-span-full text-center py-12 text-slate-600 font-bold tracking-wider uppercase">
-            The vault is empty. Check back soon.
+        <div class="empty-state">
+            <span>🏸</span>
+            <p>The vault is empty — check back soon!</p>
         </div>
         {% endfor %}
-    </div> 
-</div>  
+
+        <!-- Sample static cards for visual demo (shown when DB is empty or to fill layout) -->
+        {% if not rackets %}
+        {% for item in "12345"|make_list %}
+        <div class="racket-card">
+            <div class="card-img" style="background: linear-gradient(135deg, #0f1219 0%, #1a1e2a 100%);">
+                <div class="card-img-glow"></div>
+                <span style="font-size: 4rem;">🏸</span>
+            </div>
+            <div class="card-body">
+                <div class="card-brand">YONEX</div>
+                <div class="card-name">Astrox 88D Pro</div>
+                <div class="card-desc">High-flex graphite shaft with rotational generator system. Ideal for doubles players seeking sharp attack play.</div>
+                <div class="card-footer">
+                    <div>
+                        <div class="card-price-label">Price</div>
+                        <div class="card-price">₹8,499</div>
+                    </div>
+                    <a href="#" class="btn-buy">Buy Now</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+    </div>
+</div>
 {% endblock content %}

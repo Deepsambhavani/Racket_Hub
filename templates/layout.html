@@ -7,14 +7,86 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'style.css' %}">
-    <title>
-        {% block title %}
-        My Site 
-        {% endblock title %}
-    </title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <title>{% block title %}RacketHub{% endblock title %}</title>
+    <style>
+        :root {
+            --clr-bg: #080a0f;
+            --clr-surface: #0f1219;
+            --clr-card: #141820;
+            --clr-border: rgba(255,255,255,0.06);
+            --clr-accent: #e8452a;
+            --clr-accent2: #f5a623;
+            --clr-text: #e8eaf0;
+            --clr-muted: #6b7280;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: var(--clr-bg); color: var(--clr-text); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+        .font-display { font-family: 'Bebas Neue', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* Navbar */
+        .navbar {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(8,10,15,0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--clr-border);
+        }
+        .nav-inner {
+            max-width: 1280px; margin: 0 auto;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 2rem; height: 64px;
+        }
+        .nav-logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.6rem; letter-spacing: 0.08em;
+            color: #fff; text-decoration: none;
+            display: flex; align-items: center; gap: 0.4rem;
+        }
+        .nav-logo span { color: var(--clr-accent); }
+        .nav-links { display: flex; gap: 0.25rem; align-items: center; }
+        .nav-links a {
+            color: var(--clr-muted); text-decoration: none;
+            font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em;
+            text-transform: uppercase; padding: 0.45rem 0.9rem; border-radius: 8px;
+            transition: color 0.2s, background 0.2s;
+        }
+        .nav-links a:hover { color: #fff; background: rgba(255,255,255,0.05); }
+        .nav-links a.active { color: var(--clr-accent); }
+        .nav-cta {
+            background: var(--clr-accent); color: #fff !important;
+            border-radius: 8px; padding: 0.45rem 1.1rem !important;
+        }
+        .nav-cta:hover { background: #c93820 !important; }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--clr-border);
+            padding: 2rem; text-align: center;
+            color: var(--clr-muted); font-size: 0.8rem;
+            margin-top: auto;
+        }
+    </style>
 </head>
 <body>
-    <nav>this is the navigation bar</nav>
-    {% block content %}{% endblock content %}
+
+<nav class="navbar">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo">Racket<span>Hub</span></a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/DBL/">Collection</a>
+            <a href="/DBL/racket_shop/">Find by Type</a>
+            <a href="/DBL/" class="nav-cta">Shop Now</a>
+        </div>
+    </div>
+</nav>
+
+{% block content %}{% endblock content %}
+
+<footer>
+    <p>© 2025 RacketHub — Built with Django & Tailwind CSS &nbsp;·&nbsp; Your first Django project 🏸</p>
+</footer>
+
 </body>
 </html>

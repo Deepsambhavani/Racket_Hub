@@ -1,61 +1,161 @@
 {% extends "layout.html" %}
 
-{% block title %}Buy {{ racket.name }}{% endblock title %}
+{% block title %}{{ racket.name }} — RacketHub{% endblock title %}
 
 {% block content %}
-<div class="min-h-screen bg-slate-950 py-12 px-4 sm:px-6 lg:px-8 font-sans antialiased text-slate-100">
-    
-    <div class="max-w-4xl mx-auto bg-slate-900 rounded-3xl shadow-2xl overflow-hidden border border-slate-800/80">
-        <div class="md:flex">
-            
-            <div class="md:shrink-0 md:w-1/2 bg-slate-950 flex items-center justify-center p-8 relative border-b md:border-b-0 md:border-r border-slate-800/50">
-                <div class="absolute w-72 h-72 bg-red-600/10 rounded-full blur-3xl scale-75"></div>
-                
+<style>
+    .buy-page {
+        min-height: calc(100vh - 64px);
+        padding: 3rem 2rem; background: var(--clr-bg);
+    }
+    .buy-inner { max-width: 960px; margin: 0 auto; }
+
+    .back-link {
+        display: inline-flex; align-items: center; gap: 0.4rem;
+        color: var(--clr-muted); text-decoration: none;
+        font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.1em; margin-bottom: 2rem;
+        transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--clr-text); }
+
+    .buy-card {
+        background: var(--clr-card);
+        border: 1px solid var(--clr-border);
+        border-radius: 24px; overflow: hidden;
+        display: grid; grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 640px) { .buy-card { grid-template-columns: 1fr; } }
+
+    .buy-img-panel {
+        background: var(--clr-bg);
+        display: flex; align-items: center; justify-content: center;
+        padding: 3rem; position: relative; overflow: hidden;
+        border-right: 1px solid var(--clr-border);
+        min-height: 380px;
+    }
+    .buy-img-glow {
+        position: absolute;
+        width: 300px; height: 300px;
+        background: radial-gradient(circle, rgba(232,69,42,0.15) 0%, transparent 70%);
+        border-radius: 50%; top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    .buy-img-panel img {
+        max-height: 320px; max-width: 100%; object-fit: contain;
+        position: relative; z-index: 1;
+        transition: transform 0.4s ease;
+    }
+    .buy-img-panel:hover img { transform: scale(1.05) rotate(-2deg); }
+
+    .buy-info-panel { padding: 2.5rem; display: flex; flex-direction: column; justify-content: space-between; }
+    .buy-badge {
+        display: inline-flex; align-items: center;
+        background: rgba(232,69,42,0.1); border: 1px solid rgba(232,69,42,0.2);
+        color: #f08070; font-size: 0.65rem; font-weight: 700;
+        letter-spacing: 0.15em; text-transform: uppercase;
+        padding: 0.3rem 0.75rem; border-radius: 100px;
+        width: fit-content; margin-bottom: 1rem;
+    }
+    .buy-name {
+        font-weight: 800; font-size: clamp(1.5rem, 4vw, 2.2rem);
+        color: #fff; letter-spacing: -0.02em; line-height: 1.2;
+    }
+    .buy-type {
+        margin-top: 0.4rem; font-size: 0.75rem; font-weight: 700;
+        color: var(--clr-muted); text-transform: uppercase; letter-spacing: 0.1em;
+    }
+
+    .buy-price-block { margin-top: 1.5rem; }
+    .buy-price-label {
+        font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.12em; color: var(--clr-muted);
+    }
+    .buy-price {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 2.5rem; font-weight: 700; color: var(--clr-accent2);
+        letter-spacing: -0.03em; line-height: 1;
+        margin-top: 0.3rem;
+    }
+    .buy-price span { font-size: 0.9rem; color: var(--clr-muted); font-weight: 400; font-family: 'DM Sans', sans-serif; }
+
+    .divider { border: none; border-top: 1px solid var(--clr-border); margin: 1.5rem 0; }
+
+    .buy-desc-label {
+        font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.12em; color: var(--clr-muted); margin-bottom: 0.5rem;
+    }
+    .buy-desc { font-size: 0.9rem; color: var(--clr-muted); line-height: 1.7; }
+
+    .buy-actions { margin-top: 2rem; display: flex; flex-direction: column; gap: 0.75rem; }
+    .btn-checkout {
+        display: block; text-align: center;
+        background: var(--clr-accent); color: #fff;
+        font-size: 0.8rem; font-weight: 700; letter-spacing: 0.12em;
+        text-transform: uppercase; padding: 1rem 1.5rem; border-radius: 12px;
+        border: none; cursor: pointer; text-decoration: none;
+        transition: background 0.2s, transform 0.15s;
+    }
+    .btn-checkout:hover { background: #c93820; transform: translateY(-1px); }
+    .btn-back {
+        display: block; text-align: center;
+        background: rgba(255,255,255,0.04); border: 1px solid var(--clr-border);
+        color: var(--clr-muted); text-decoration: none;
+        font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em;
+        text-transform: uppercase; padding: 0.85rem 1.5rem; border-radius: 12px;
+        transition: background 0.2s, color 0.2s;
+    }
+    .btn-back:hover { background: rgba(255,255,255,0.07); color: var(--clr-text); }
+
+    /* Warranty badge */
+    .warranty-pill {
+        display: inline-flex; align-items: center; gap: 0.35rem;
+        background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2);
+        color: #4ade80; font-size: 0.65rem; font-weight: 700;
+        letter-spacing: 0.1em; text-transform: uppercase;
+        padding: 0.3rem 0.7rem; border-radius: 100px; margin-top: 0.75rem;
+    }
+</style>
+
+<div class="buy-page">
+    <div class="buy-inner">
+        <a href="{% url 'DBL' %}" class="back-link">← Back to Collection</a>
+
+        <div class="buy-card">
+            <!-- Image -->
+            <div class="buy-img-panel">
+                <div class="buy-img-glow"></div>
                 {% if racket.image %}
-                    <img class="h-80 w-full object-contain transform hover:scale-110 transition duration-300 ease-in-out relative z-10" 
-                         src="{{ racket.image.url }}" 
-                         alt="{{ racket.name }}">
+                    <img src="{{ racket.image.url }}" alt="{{ racket.name }}">
                 {% else %}
-                    <div class="text-slate-600 font-bold tracking-widest uppercase text-xs">No Gear Image Available</div>
+                    <span style="font-size: 6rem; opacity: 0.3;">🏸</span>
                 {% endif %}
             </div>
 
-            <div class="p-8 md:p-12 flex flex-col justify-between md:w-1/2 bg-gradient-to-b from-slate-900 to-slate-950">
+            <!-- Info -->
+            <div class="buy-info-panel">
                 <div>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-black bg-red-500/10 text-red-400 uppercase tracking-widest border border-red-500/20">
-                        Selected Weapon
-                    </span>
+                    <div class="buy-badge">Selected Racket</div>
+                    <h1 class="buy-name">{{ racket.name }}</h1>
+                    <div class="buy-type">{{ racket.get_type_display }}</div>
+                    <div class="warranty-pill">✓ 12 Month Warranty</div>
 
-                    <h1 class="mt-4 text-3xl font-black tracking-tight text-white uppercase sm:text-4xl">
-                        {{ racket.name }}
-                    </h1>
-
-                    <div class="mt-6 flex flex-col">
-                        <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Total Price</span>
-                        <p class="text-4xl font-black font-mono text-amber-400 tracking-tight mt-1">
-                            ₹{{ racket.pricing }} <span class="text-sm font-bold text-slate-500 font-sans tracking-normal">INR</span>
-                        </p>
+                    <div class="buy-price-block">
+                        <div class="buy-price-label">Total Price</div>
+                        <div class="buy-price">₹{{ racket.pricing }} <span>INR</span></div>
                     </div>
 
-                    <div class="my-6 border-t border-slate-800/80"></div>
+                    <hr class="divider">
 
-                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Product Specifications</h3>
-                    <p class="text-base text-slate-400 font-light leading-relaxed">
-                        {{ racket.description }}
-                    </p>
+                    <div class="buy-desc-label">About This Racket</div>
+                    <div class="buy-desc">{{ racket.description|default:"Premium performance racket built for the competitive court. Lightweight frame with high-flex shaft for explosive power and precise control." }}</div>
                 </div>
 
-                <div class="mt-8 space-y-4">
-                    <button class="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white font-black text-xs uppercase tracking-widest py-4 px-6 rounded-2xl shadow-xl shadow-red-600/10 transition-all duration-150 transform active:scale-[0.98]">
-                        Proceed to Checkout
-                    </button>
-                    
-                    <a href="{% url 'DBL' %}" class="block text-center w-full bg-slate-900 hover:bg-slate-800/80 text-slate-400 hover:text-white font-bold text-xs uppercase tracking-widest py-3.5 px-6 rounded-2xl border border-slate-800 transition-colors duration-150">
-                        ← Back to Collection
-                    </a>
+                <div class="buy-actions">
+                    <button class="btn-checkout">Proceed to Checkout</button>
+                    <a href="{% url 'DBL' %}" class="btn-back">← Continue Shopping</a>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
