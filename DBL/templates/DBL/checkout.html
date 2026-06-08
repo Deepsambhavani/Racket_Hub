@@ -1,0 +1,126 @@
+{% extends "layout.html" %}
+{% block title %}Checkout — {{ racket.name }}{% endblock %}
+
+{% block content %}
+<style>
+    :root { --clr-bg:#080a0f; --clr-surface:#0f1219; --clr-card:#141820; --clr-border:rgba(255,255,255,0.06); --clr-accent:#e8452a; --clr-accent2:#f5a623; --clr-text:#e8eaf0; --clr-muted:#6b7280; }
+    .checkout-page { padding:3rem 2rem; max-width:1000px; margin:0 auto; }
+    .back-link { display:inline-flex; align-items:center; gap:0.4rem; color:var(--clr-muted); text-decoration:none; font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:2rem; transition:color 0.2s; }
+    .back-link:hover { color:var(--clr-text); }
+    .checkout-grid { display:grid; grid-template-columns:1.6fr 1fr; gap:2rem; }
+    @media(max-width:700px){ .checkout-grid { grid-template-columns:1fr; } }
+    .checkout-card { background:var(--clr-card); border:1px solid var(--clr-border); border-radius:20px; padding:2rem; }
+    .section-label { font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.15em; color:var(--clr-accent); margin-bottom:1.25rem; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    @media(max-width:500px){ .form-row { grid-template-columns:1fr; } }
+    .form-group { margin-bottom:1.1rem; }
+    .form-label { display:block; font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--clr-muted); margin-bottom:0.4rem; }
+    .checkout-input { width:100%; background:var(--clr-bg); border:1px solid var(--clr-border); border-radius:10px; color:var(--clr-text); font-size:0.875rem; font-family:'DM Sans',sans-serif; padding:0.75rem 1rem; outline:none; transition:border-color 0.2s; box-sizing:border-box; }
+    .checkout-input:focus { border-color:var(--clr-accent); }
+    .payment-options { display:flex; flex-direction:column; gap:0.6rem; margin-top:0.5rem; }
+    .payment-option { display:flex; align-items:center; gap:0.75rem; background:var(--clr-bg); border:1px solid var(--clr-border); border-radius:10px; padding:0.75rem 1rem; cursor:pointer; transition:border-color 0.2s; }
+    .payment-option:has(input:checked) { border-color:var(--clr-accent); background:rgba(232,69,42,0.05); }
+    .payment-option input { accent-color:var(--clr-accent); }
+    .payment-option label { font-size:0.875rem; color:var(--clr-text); cursor:pointer; }
+    .order-summary { position:sticky; top:80px; }
+    .summary-img { background:var(--clr-bg); border-radius:12px; height:160px; display:flex; align-items:center; justify-content:center; margin-bottom:1.25rem; border:1px solid var(--clr-border); overflow:hidden; }
+    .summary-img img { max-height:140px; max-width:100%; object-fit:contain; }
+    .summary-brand { font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.15em; color:var(--clr-accent); }
+    .summary-name { font-weight:700; font-size:1.1rem; color:#fff; margin-top:0.25rem; line-height:1.3; }
+    .summary-divider { border:none; border-top:1px solid var(--clr-border); margin:1.25rem 0; }
+    .summary-row { display:flex; justify-content:space-between; font-size:0.85rem; color:var(--clr-muted); margin-bottom:0.5rem; }
+    .summary-total { display:flex; justify-content:space-between; font-weight:700; color:#fff; font-size:1.1rem; margin-top:0.5rem; }
+    .summary-total span:last-child { color:var(--clr-accent2); font-family:'JetBrains Mono',monospace; }
+    .btn-place-order { width:100%; margin-top:1.5rem; background:var(--clr-accent); color:#fff; border:none; font-size:0.8rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:1rem; border-radius:12px; cursor:pointer; font-family:'DM Sans',sans-serif; transition:background 0.2s; }
+    .btn-place-order:hover { background:#c93820; }
+    .secure-note { text-align:center; font-size:0.7rem; color:var(--clr-muted); margin-top:0.75rem; }
+</style>
+
+<div class="checkout-page">
+    <a href="{% url 'buy' racket.id %}" class="back-link">← Back to Racket</a>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="checkout-grid">
+            <!-- Left: Form -->
+            <div>
+                <div class="checkout-card" style="margin-bottom:1.5rem;">
+                    <div class="section-label">Delivery Details</div>
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        {{ form.full_name }}
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Phone</label>
+                            {{ form.phone }}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            {{ form.email }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Address Line 1</label>
+                        {{ form.address_line1 }}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Address Line 2</label>
+                        {{ form.address_line2 }}
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">City</label>
+                            {{ form.city }}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">State</label>
+                            {{ form.state }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">PIN Code</label>
+                        {{ form.pincode }}
+                    </div>
+                </div>
+
+                <div class="checkout-card">
+                    <div class="section-label">Payment Method</div>
+                    <div class="payment-options">
+                        {% for radio in form.payment_method %}
+                        <div class="payment-option">
+                            {{ radio.tag }}
+                            <label for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Summary -->
+            <div class="order-summary">
+                <div class="checkout-card">
+                    <div class="section-label">Order Summary</div>
+                    <div class="summary-img">
+                        {% if racket.image %}
+                            <img src="{{ racket.image.url }}" alt="{{ racket.name }}">
+                        {% else %}
+                            <span style="font-size:3rem;">🏸</span>
+                        {% endif %}
+                    </div>
+                    <div class="summary-brand">{{ racket.get_type_display }}</div>
+                    <div class="summary-name">{{ racket.name }}</div>
+                    <hr class="summary-divider">
+                    <div class="summary-row"><span>Racket Price</span><span>₹{{ racket.pricing }}</span></div>
+                    <div class="summary-row"><span>Delivery</span><span style="color:#4ade80;">FREE</span></div>
+                    <div class="summary-row"><span>GST (18%)</span><span>₹{% widthratio racket.pricing 100 18 %}</span></div>
+                    <hr class="summary-divider">
+                    <div class="summary-total"><span>Total</span><span>₹{{ racket.pricing }}</span></div>
+                    <button type="submit" class="btn-place-order">Place Order →</button>
+                    <div class="secure-note">🔒 Secure & encrypted checkout</div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

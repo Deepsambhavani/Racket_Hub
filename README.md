@@ -1,34 +1,99 @@
-# 🏸 RacketHub: Advanced Django Learning Platform
+# 🏸 RacketHub — Badminton Racket Store
 
-Welcome to **RacketHub**, a comprehensive, database-driven web application built from scratch to deep-dive into full-stack Python development. Moving past basic "Hello World" tutorials, this project explores advanced model relationships, request-response cycles, and custom admin panel configurations.
+RacketHub is a full-stack e-commerce web application for browsing and purchasing badminton rackets, built with Django and Tailwind CSS as a learning project during my MCA studies.
 
----
+The idea was simple — build something real, not just a tutorial project. So instead of a basic todo app I built an actual product store with multiple pages, a database with 4 models covering all three Django relationships (OneToOne, OneToMany, ManyToMany), a working review system, search and filter by racket type, and a complete checkout flow with order confirmation.
 
-## 🚀 Key Features Implemented
-
-* **Robust MVC Architecture:** Properly segregated application logic using Django's Model-View-Template framework to cleanly handle database transactions and routing.
-* **Dynamic Data Querying:** Fully functional search forms that parse user submissions and interact with the database in real-time.
-* **Custom Admin Workspace:** Upgraded Django's default administrative interface using advanced layout tools like `TabularInline` and `filter_horizontal` for smooth relationship mapping.
-* **Modern Tailwind Interface:** Ditched standard HTML forms for a highly interactive, component-driven UI styled using utility-first Tailwind CSS.
+The project covers everything from setting up Django from scratch, configuring Tailwind CSS, designing templates with a base layout, working with the ORM, handling forms and form validation, serving media files, and managing everything through the Django admin panel. Each feature was built step by step and documented as daily notes throughout the build.
 
 ---
 
-## 🧠 Core Engineering Concepts Learned
+## ✨ Features
 
-### 📡 URL Routing & View Dispatching
-Mastered how Django hooks app-level configuration strings into global project routes. Gained a solid understanding of reading server logs, debugging HTTP status responses, and managing the state of context dictionaries during page loads.
-
-### 🔄 Many-to-Many & Reverse Database Lookups
-Ran into a critical `AttributeError` when attempting to access properties across model boundaries. Solved the roadblock by understanding data normalization and leveraging Django's hidden backend relationship paths using custom `related_name` hooks (`object.types.all()`).
-
-### 📑 Form Security & Data Sanitization
-Explored the inner workings of `request.POST` data parsing, learning how Django handles secure form validation via `form.is_valid()` and strips malicious inputs down into safe, usable `cleaned_data` objects.
+- 🏸 **Racket Listing** — Browse all rackets with image, brand, price and description
+- 🔍 **Search by Type** — Filter rackets by category (Head Heavy, Lightweight, Professional etc.)
+- 📄 **Racket Detail Page** — View full details with laser serial number and warranty info
+- ⭐ **Customer Reviews** — Leave star ratings and comments on any racket
+- 🛒 **Checkout Page** — Enter delivery address and choose payment method (COD / UPI / Card)
+- ✅ **Order Confirmation** — Summary page after placing an order
+- 🔐 **Admin Panel** — Manage rackets, types, reviews and serials via Django admin
 
 ---
 
-## 🛠️ Tech Stack & Tools Used
+## 🛠️ Tech Stack
 
-* **Backend Framework:** Django (Python)
-* **Database Engine:** SQLite3
-* **Frontend Styles:** Tailwind CSS CDN
-* **Version Control:** Git & GitHub
+| Technology | Usage |
+|------------|-------|
+| Python 3.13 | Backend language |
+| Django 6.0 | Web framework |
+| Tailwind CSS | Styling |
+| SQLite | Database |
+| Pillow | Image handling |
+
+---
+
+## 🗄️ Database Models
+
+- **rackets** — Stores racket info (name, image, type, price, description)
+- **racket_type** — Categories with ManyToMany relation to rackets
+- **racket_reviews** — Reviews with ForeignKey to racket and user (OneToMany)
+- **LaserSerial** — Unique serial code per racket (OneToOne)
+
+---
+
+## ⚙️ How to Run Locally
+
+**1. Clone the repository**
+```bash
+git clone https://github.com/yourusername/racket-hub.git
+cd racket-hub
+```
+
+**2. Create and activate virtual environment**
+```bash
+python -m venv .venv
+.venv\Scripts\activate        # Windows
+source .venv/bin/activate     # Mac/Linux
+```
+
+**3. Install dependencies**
+```bash
+pip install django pillow django-tailwind django-browser-reload
+```
+
+**4. Run migrations**
+```bash
+python manage.py migrate
+```
+
+**5. Create admin user**
+```bash
+python manage.py createsuperuser
+```
+
+**6. Start Tailwind (in a separate terminal)**
+```bash
+python manage.py tailwind start
+```
+
+**7. Run the server**
+```bash
+python manage.py runserver
+```
+
+Open `http://127.0.0.1:8000` in your browser.
+
+---
+
+## 👨‍💻 Author
+
+**Deep Sambhavani**
+- 🌐 Portfolio: [deepsambhavani.pythonanywhere.com](http://deepsambhavani.pythonanywhere.com)
+- 💼 LinkedIn: [linkedin.com/in/deepsambhavani](https://linkedin.com/in/deepsambhavani)
+- 🐙 GitHub: [github.com/deepsambhavani](https://github.com/deepsambhavani)
+
+---
+
+## 📌 Note
+
+This is a learning project built during my MCA studies at Silver Oak University to practice Django fundamentals including models, views, templates, forms, ORM relationships and admin panel.

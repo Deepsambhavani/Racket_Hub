@@ -1,0 +1,16 @@
+how to start Django?
+-- install Django run command - pip install Django
+-- then run Django-admin projectstart projectname
+This will create a project for you 
+now how to code on Django?
+**Structure of Django
+	-MVC(Model-View-Controller)
+	-first create necessary files like (views.py...)
+	-You have to create template folder in main project file and also create static file.
+	-if you create any template you have to use (%load static%)
+to load css/js and use (%static, 'style.css'%) for URL
+	-now you have to add httpresponce and render in views.py for loading and returning you template
+	-you have to give root in setting file where it says templates and inside it DIRS(templates)
+	-for loading static file you have to give path to it for that you have to import os in the setting.py with the path
+	-then you have to write this command under static_url STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
+	Now you can check it will be running

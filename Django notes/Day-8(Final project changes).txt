@@ -1,0 +1,87 @@
+hey there,
+	-today we made alot of big changes in the project and i will write everything so i don't forget it later..
+
+	*1. Templates & Layout (HTML + CSS changes)
+	--so earlier i was writing plain css inside <style> tags in all templates but the whole point of installing tailwind was to use it
+	--so we made new layout.html with sticky navbar which has blur effect and all the links are working now
+	--the layout has two buttons in nav "collection" and "find by type" and "shop now" as cta button
+	--made index.html home page with hero section, stats bar (rackets count, brands, price, warranty), features section and cta strip at bottom
+	--made DBL.html for showing all rackets in grid card layout with image hover zoom, price, brand name and buy button
+	--made buy.html for the racket detail page which shows image on left and all info on right side
+
+	**important thing - the nav links were wrong before they were pointing to /rackets/ but our url is /DBL/ so always check your urls.py before writing links in templates**
+
+	*2. Forms fix (forms.py)
+	--the review form was broken because we had 'user' field in the ReviewForm
+	--the problem was user is a ForeignKey(User) in the model but we were trying to take it as a text input from user in form which doesn't work
+	--fix was simple just remove the user field from the ReviewForm fields list like this
+
+			class ReviewForm(forms.ModelForm):
+    			class Meta:
+        			model = racket_reviews
+        			fields = ['rating', 'comment']  #removed user from here
+
+	--then in views.py we handle the user manually by creating a guest user automatically
+			anon, _ = User.objects.get_or_create(username='guest')
+            new_review.user = anon
+	--this way the form works without login system
+
+	*3. views.py fix
+	--the all_rackets view was broken because the form was returning rackets object but we needed racket_type object
+	--so we changed forms.py to use racket_type model in the dropdown not the rackets model
+	--syntax for that in forms.py
+			class racketform(forms.Form):
+    			racket_type = forms.ModelChoiceField(queryset=racket_type.objects.all(), label='Select Type')
+	--this gives us racket_type object and then we call .rackets.all() on it to get all rackets of that type
+	--stores = chosen_racket.rackets.all() this line works now because chosen_racket is racket_type object which has rackets field in it
+
+	*4. Checkout page (new feature)
+	--added checkout page which was not there before clicking the button was doing nothing
+	--for that i first created CheckoutForm in forms.py with fields like full_name, phone, email, address, city, state, pincode and payment_method
+	--payment_method has 3 choices - Cash on Delivery, UPI, Card and i used RadioSelect widget for it
+	--created checkout view in views.py
+			def checkout(request, racket_id):
+    			racket = get_object_or_404(rackets, id=racket_id)
+    			if request.method == 'POST':
+        			form = CheckoutForm(request.POST)
+        			if form.is_valid():
+            			return render(request, 'DBL/order_confirm.html', {
+                			'racket': racket,
+                			'order': form.cleaned_data,
+            			})
+    			else:
+        			form = CheckoutForm()
+    			return render(request, 'DBL/checkout.html', {'racket': racket, 'form': form})
+	--added url for it in urls.py
+			path('checkout/<int:racket_id>/', views.checkout, name='checkout'),
+	--in buy.html changed the Proceed to Checkout button from <button> to <a href> pointing to checkout url
+			<a href="{% url 'checkout' racket.id %}" class="btn-checkout">Proceed to Checkout</a>
+	--after form submission it shows order_confirm.html with all the details of the order
+
+	**important - when you have a button that needs to go to another page don't use <button> use <a href> with url tag**
+
+	*5. Order Confirm page (new template)
+	--created order_confirm.html which shows a success screen after checkout
+	--it shows the racket name, price, payment method, delivery city and phone number
+	--has two buttons - back to home and shop more
+
+	*6. Added racket data to database
+	--before there were only 3 rackets in db discor, riot, ratro_5 with no proper images
+	--added 7 new rackets with proper names prices descriptions
+		Yonex Astrox 88D Pro - 14999
+		Yonex Nanoflare 800 - 12499
+		Boult AirFlex Pro - 3499
+		Boult Smash X7 - 2299
+		Deep Power 7.0 - 1799
+		Deep Carbon Elite - 4999
+		Samsh Voltforce 9 - 6499
+	--also created LaserSerial for each racket automatically using uuid
+	--created 5 racket types - Head Heavy, Lightweight, Beginner Friendly, Professional, Budget Pick
+	--each type has 3 rackets connected to it using ManyToMany relationship we learned before
+	--to add data from code we used django shell
+			python manage.py shell
+			then import your model and use .objects.create() to add data
+
+	**big thing - we did not need to touch models.py or make new migrations for adding data. migrations are only for changing the structure of the model (adding/removing fields). for adding actual records you just use shell or admin panel**
+
+	--see you next time peace out 🫰🏻

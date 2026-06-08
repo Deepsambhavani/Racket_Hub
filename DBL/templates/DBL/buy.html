@@ -1,228 +1,119 @@
 {% extends "layout.html" %}
-
-{% block title %}{{ racket.name }} — RacketHub{% endblock title %}
+{% block title %}{{ racket.name }} — RacketHub{% endblock %}
 
 {% block content %}
 <style>
-    .buy-page {
-        min-height: calc(100vh - 64px);
-        padding: 3rem 2rem; background: var(--clr-bg);
-    }
+    :root { --clr-bg:#080a0f; --clr-surface:#0f1219; --clr-card:#141820; --clr-border:rgba(255,255,255,0.06); --clr-accent:#e8452a; --clr-accent2:#f5a623; --clr-text:#e8eaf0; --clr-muted:#6b7280; }
+    body { background: var(--clr-bg); color: var(--clr-text); }
+    .buy-page { min-height: calc(100vh - 64px); padding: 3rem 2rem; }
     .buy-inner { max-width: 960px; margin: 0 auto; }
-
-    .back-link {
-        display: inline-flex; align-items: center; gap: 0.4rem;
-        color: var(--clr-muted); text-decoration: none;
-        font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
-        letter-spacing: 0.1em; margin-bottom: 2rem;
-        transition: color 0.2s;
-    }
-    .back-link:hover { color: var(--clr-text); }
-
-    .buy-card {
-        background: var(--clr-card);
-        border: 1px solid var(--clr-border);
-        border-radius: 24px; overflow: hidden;
-        display: grid; grid-template-columns: 1fr 1fr;
-    }
-    @media (max-width: 640px) { .buy-card { grid-template-columns: 1fr; } }
-
-    .buy-img-panel {
-        background: var(--clr-bg);
-        display: flex; align-items: center; justify-content: center;
-        padding: 3rem; position: relative; overflow: hidden;
-        border-right: 1px solid var(--clr-border);
-        min-height: 380px;
-    }
-    .buy-img-glow {
-        position: absolute;
-        width: 300px; height: 300px;
-        background: radial-gradient(circle, rgba(232,69,42,0.15) 0%, transparent 70%);
-        border-radius: 50%; top: 50%; left: 50%;
-        transform: translate(-50%, -50%);
-    }
-    .buy-img-panel img {
-        max-height: 320px; max-width: 100%; object-fit: contain;
-        position: relative; z-index: 1;
-        transition: transform 0.4s ease;
-    }
-    .buy-img-panel:hover img { transform: scale(1.05) rotate(-2deg); }
-
-    .buy-info-panel { padding: 2.5rem; display: flex; flex-direction: column; justify-content: space-between; }
-    .buy-badge {
-        display: inline-flex; align-items: center;
-        background: rgba(232,69,42,0.1); border: 1px solid rgba(232,69,42,0.2);
-        color: #f08070; font-size: 0.65rem; font-weight: 700;
-        letter-spacing: 0.15em; text-transform: uppercase;
-        padding: 0.3rem 0.75rem; border-radius: 100px;
-        width: fit-content; margin-bottom: 1rem;
-    }
-    .buy-name {
-        font-weight: 800; font-size: clamp(1.5rem, 4vw, 2.2rem);
-        color: #fff; letter-spacing: -0.02em; line-height: 1.2;
-    }
-    .buy-type {
-        margin-top: 0.4rem; font-size: 0.75rem; font-weight: 700;
-        color: var(--clr-muted); text-transform: uppercase; letter-spacing: 0.1em;
-    }
-
-    .buy-price-block { margin-top: 1.5rem; }
-    .buy-price-label {
-        font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
-        letter-spacing: 0.12em; color: var(--clr-muted);
-    }
-    .buy-price {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 2.5rem; font-weight: 700; color: var(--clr-accent2);
-        letter-spacing: -0.03em; line-height: 1;
-        margin-top: 0.3rem;
-    }
-    .buy-price span { font-size: 0.9rem; color: var(--clr-muted); font-weight: 400; font-family: 'DM Sans', sans-serif; }
-
-    .divider { border: none; border-top: 1px solid var(--clr-border); margin: 1.5rem 0; }
-
-    .buy-desc-label {
-        font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
-        letter-spacing: 0.12em; color: var(--clr-muted); margin-bottom: 0.5rem;
-    }
-    .buy-desc { font-size: 0.9rem; color: var(--clr-muted); line-height: 1.7; }
-
-    .buy-actions { margin-top: 2rem; display: flex; flex-direction: column; gap: 0.75rem; }
-    .btn-checkout {
-        display: block; text-align: center;
-        background: var(--clr-accent); color: #fff;
-        font-size: 0.8rem; font-weight: 700; letter-spacing: 0.12em;
-        text-transform: uppercase; padding: 1rem 1.5rem; border-radius: 12px;
-        border: none; cursor: pointer; text-decoration: none;
-        transition: background 0.2s, transform 0.15s;
-    }
-    .btn-checkout:hover { background: #c93820; transform: translateY(-1px); }
-    .btn-back {
-        display: block; text-align: center;
-        background: rgba(255,255,255,0.04); border: 1px solid var(--clr-border);
-        color: var(--clr-muted); text-decoration: none;
-        font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em;
-        text-transform: uppercase; padding: 0.85rem 1.5rem; border-radius: 12px;
-        transition: background 0.2s, color 0.2s;
-    }
-    .btn-back:hover { background: rgba(255,255,255,0.07); color: var(--clr-text); }
-
-    /* Warranty badge */
-    .warranty-pill {
-        display: inline-flex; align-items: center; gap: 0.35rem;
-        background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2);
-        color: #4ade80; font-size: 0.65rem; font-weight: 700;
-        letter-spacing: 0.1em; text-transform: uppercase;
-        padding: 0.3rem 0.7rem; border-radius: 100px; margin-top: 0.75rem;
-    }
+    .back-link { display:inline-flex; align-items:center; gap:0.4rem; color:var(--clr-muted); text-decoration:none; font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:2rem; transition:color 0.2s; }
+    .back-link:hover { color:var(--clr-text); }
+    .buy-card { background:var(--clr-card); border:1px solid var(--clr-border); border-radius:24px; overflow:hidden; display:grid; grid-template-columns:1fr 1fr; }
+    @media(max-width:640px){ .buy-card { grid-template-columns:1fr; } }
+    .buy-img-panel { background:var(--clr-bg); display:flex; align-items:center; justify-content:center; padding:3rem; position:relative; overflow:hidden; border-right:1px solid var(--clr-border); min-height:380px; }
+    .buy-img-glow { position:absolute; width:300px; height:300px; background:radial-gradient(circle,rgba(232,69,42,0.15) 0%,transparent 70%); border-radius:50%; top:50%; left:50%; transform:translate(-50%,-50%); }
+    .buy-img-panel img { max-height:320px; max-width:100%; object-fit:contain; position:relative; z-index:1; transition:transform 0.4s; }
+    .buy-img-panel:hover img { transform:scale(1.05) rotate(-2deg); }
+    .buy-info-panel { padding:2.5rem; display:flex; flex-direction:column; justify-content:space-between; }
+    .buy-badge { display:inline-flex; background:rgba(232,69,42,0.1); border:1px solid rgba(232,69,42,0.2); color:#f08070; font-size:0.65rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase; padding:0.3rem 0.75rem; border-radius:100px; width:fit-content; margin-bottom:1rem; }
+    .buy-name { font-weight:800; font-size:clamp(1.5rem,4vw,2.2rem); color:#fff; line-height:1.2; }
+    .buy-type { margin-top:0.4rem; font-size:0.75rem; font-weight:700; color:var(--clr-muted); text-transform:uppercase; letter-spacing:0.1em; }
+    .warranty-pill { display:inline-flex; align-items:center; gap:0.35rem; background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.2); color:#4ade80; font-size:0.65rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.3rem 0.7rem; border-radius:100px; margin-top:0.75rem; }
+    .buy-price-block { margin-top:1.5rem; }
+    .buy-price-label { font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--clr-muted); }
+    .buy-price { font-family:'JetBrains Mono',monospace; font-size:2.5rem; font-weight:700; color:var(--clr-accent2); line-height:1; margin-top:0.3rem; }
+    .buy-price span { font-size:0.9rem; color:var(--clr-muted); font-weight:400; font-family:'DM Sans',sans-serif; }
+    .divider { border:none; border-top:1px solid var(--clr-border); margin:1.5rem 0; }
+    .buy-desc-label { font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--clr-muted); margin-bottom:0.5rem; }
+    .buy-desc { font-size:0.9rem; color:var(--clr-muted); line-height:1.7; }
+    .buy-actions { margin-top:2rem; display:flex; flex-direction:column; gap:0.75rem; }
+    .btn-checkout { display:block; text-align:center; background:var(--clr-accent); color:#fff; text-decoration:none; font-size:0.8rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:1rem 1.5rem; border-radius:12px; transition:background 0.2s,transform 0.15s; }
+    .btn-checkout:hover { background:#c93820; transform:translateY(-1px); }
+    .btn-back { display:block; text-align:center; background:rgba(255,255,255,0.04); border:1px solid var(--clr-border); color:var(--clr-muted); text-decoration:none; font-size:0.8rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.85rem 1.5rem; border-radius:12px; transition:background 0.2s,color 0.2s; }
+    .btn-back:hover { background:rgba(255,255,255,0.07); color:var(--clr-text); }
+    .reviews-section { max-width:960px; margin:2.5rem auto 0; padding:0 2rem 4rem; display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
+    @media(max-width:640px){ .reviews-section { grid-template-columns:1fr; } }
+    .review-panel { background:var(--clr-card); border:1px solid var(--clr-border); border-radius:20px; padding:1.75rem; }
+    .panel-title { font-size:1rem; font-weight:700; color:#fff; margin-bottom:1.25rem; display:flex; align-items:center; gap:0.5rem; }
+    .review-item { background:rgba(255,255,255,0.03); border:1px solid var(--clr-border); border-radius:12px; padding:1rem; margin-bottom:0.75rem; }
+    .review-stars { color:#f5a623; font-size:0.8rem; margin-bottom:0.3rem; }
+    .review-comment { font-size:0.825rem; color:var(--clr-muted); line-height:1.6; }
+    .empty-reviews { text-align:center; padding:2.5rem; color:var(--clr-muted); font-size:0.8rem; border:1px dashed var(--clr-border); border-radius:12px; }
+    .form-group { margin-bottom:1rem; }
+    .form-label { display:block; font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:var(--clr-muted); margin-bottom:0.4rem; }
+    .form-group select, .form-group textarea { width:100%; background:var(--clr-bg); border:1px solid var(--clr-border); border-radius:10px; color:var(--clr-text); font-size:0.875rem; font-family:'DM Sans',sans-serif; padding:0.75rem 1rem; outline:none; transition:border-color 0.2s; resize:none; }
+    .form-group select:focus, .form-group textarea:focus { border-color:var(--clr-accent); }
+    .btn-review { width:100%; background:var(--clr-accent); color:#fff; border:none; font-size:0.8rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.85rem; border-radius:10px; cursor:pointer; font-family:'DM Sans',sans-serif; transition:background 0.2s; }
+    .btn-review:hover { background:#c93820; }
 </style>
 
 <div class="buy-page">
     <div class="buy-inner">
         <a href="{% url 'DBL' %}" class="back-link">← Back to Collection</a>
-
         <div class="buy-card">
-            <!-- Image -->
             <div class="buy-img-panel">
                 <div class="buy-img-glow"></div>
                 {% if racket.image %}
                     <img src="{{ racket.image.url }}" alt="{{ racket.name }}">
                 {% else %}
-                    <span style="font-size: 6rem; opacity: 0.3;">🏸</span>
+                    <span style="font-size:6rem;opacity:0.3;">🏸</span>
                 {% endif %}
             </div>
-
-            <!-- Info -->
             <div class="buy-info-panel">
                 <div>
-                    <div class="buy-badge">Selected Racket</div>
+                    <div class="buy-badge">{{ racket.get_type_display }}</div>
                     <h1 class="buy-name">{{ racket.name }}</h1>
-                    <div class="buy-type">{{ racket.get_type_display }}</div>
                     <div class="warranty-pill">✓ 12 Month Warranty</div>
-
                     <div class="buy-price-block">
-                        <div class="buy-price-label">Total Price</div>
+                        <div class="buy-price-label">Price</div>
                         <div class="buy-price">₹{{ racket.pricing }} <span>INR</span></div>
                     </div>
-
                     <hr class="divider">
-
                     <div class="buy-desc-label">About This Racket</div>
-                    <div class="buy-desc">{{ racket.description|default:"Premium performance racket built for the competitive court. Lightweight frame with high-flex shaft for explosive power and precise control." }}</div>
+                    <div class="buy-desc">{{ racket.description }}</div>
                 </div>
-
                 <div class="buy-actions">
-                    <button class="btn-checkout">Proceed to Checkout</button>
+                    <a href="{% url 'checkout' racket.id %}" class="btn-checkout">Proceed to Checkout →</a>
                     <a href="{% url 'DBL' %}" class="btn-back">← Continue Shopping</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<div class="max-w-5xl mx-auto mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 text-gray-100 px-4 pb-12">
-    
-    <div class="bg-[#141722] border border-gray-800/60 rounded-2xl p-6 shadow-xl">
-        <h3 class="text-lg font-bold mb-4 flex items-center gap-2 text-gray-200">
-            <span>💬 Player Reviews</span>
-            <span class="text-xs bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full font-mono">
-                {{ reviews|length }}
-            </span>
-        </h3>
-        
-        <div class="space-y-4 max-h-[380px] overflow-y-auto pr-2 custom-scrollbar">
+
+<!-- Reviews Section -->
+<div class="reviews-section">
+    <!-- Existing Reviews -->
+    <div class="review-panel">
+        <div class="panel-title">💬 Reviews <span style="font-size:0.7rem;background:rgba(255,255,255,0.06);padding:0.2rem 0.6rem;border-radius:100px;color:var(--clr-muted);">{{ reviews|length }}</span></div>
+        <div style="max-height:360px;overflow-y:auto;">
             {% for review in reviews %}
-            <div class="bg-[#1a1f2c]/50 border border-gray-800/40 p-4 rounded-xl">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="font-medium text-orange-500 text-sm">{{ review.user_name }}</span>
-                    <span class="text-xs text-yellow-400 font-bold bg-yellow-400/10 px-2 py-0.5 rounded-md border border-yellow-400/20">
-                        ★ {{ review.rating }}/5
-                    </span>
-                </div>
-                <p class="text-xs text-gray-400 leading-relaxed">{{ review.comment }}</p>
+            <div class="review-item">
+                <div class="review-stars">{% for i in "12345"|make_list %}{% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}{% endfor %} {{ review.rating }}/5</div>
+                <div class="review-comment">{{ review.comment }}</div>
             </div>
             {% empty %}
-            <div class="text-center py-12 text-gray-600 text-sm border border-dashed border-gray-800/40 rounded-xl">
-                No reviews yet for this model. Be the first to add yours!
-            </div>
+            <div class="empty-reviews">No reviews yet. Be the first! 🏸</div>
             {% endfor %}
         </div>
     </div>
 
-    <div class="bg-[#141722] border border-gray-800/60 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
-        <div>
-            <h3 class="text-lg font-bold mb-1 text-gray-200">Leave a Review</h3>
-            <p class="text-xs text-gray-500 mb-4">Tested this racket on court? Share your setup and thoughts.</p>
-        </div>
-        
-        <form method="post" class="space-y-4">
+    <!-- Review Form -->
+    <div class="review-panel">
+        <div class="panel-title">✍️ Leave a Review</div>
+        <form method="POST">
             {% csrf_token %}
-            
-            <div>
-                <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Your Name</label>
-                {{ form.user_name }}
-            </div>
-            
-            <div>
-                <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Racket Rating</label>
+            <div class="form-group">
+                <label class="form-label">Rating</label>
                 {{ form.rating }}
             </div>
-            
-            <div>
-                <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Comments</label>
+            <div class="form-group">
+                <label class="form-label">Your Comment</label>
                 {{ form.comment }}
             </div>
-            
-            <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold text-sm py-3 px-4 rounded-xl transition duration-150 transform active:scale-[0.99] shadow-md shadow-orange-900/20">
-                Post Review 🚀
-            </button>
+            <button type="submit" class="btn-review">Post Review 🚀</button>
         </form>
     </div>
 </div>
-
-<style>
-    .custom-scrollbar::-webkit-scrollbar { width: 5px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 99px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #ea580c; }
-</style>
-{% endblock content %}
+{% endblock %}

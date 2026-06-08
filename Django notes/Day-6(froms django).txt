@@ -1,0 +1,52 @@
+hey,
+ today we will learn about Django  forms first create a new template in your app and add view to retrun to the page and alsofor write url for searching you know it... 
+	**i made one mistake in here that i was writing my url path direct next to the server but our files are in dbl app so we have to add server/DBL/path_name make sure to remember....
+
+--so today's idea is to create a template where we will show all the rackets so we created all rackets page...
+--in that page we will show all the racket types and which rackets or company/brand has that rackets we will basically add filtering wit Django
+--now for forms to enter we have to create forms.py and import froms from Django and also add your rackets model where we store rackets
+--for showing and verifying your form value you have to write class and conditions in form.py
+				class racketform(forms.Form):
+    racket_type = forms.ModelChoiceField(queryset=rackets.objects.all(),label='select racket type') 
+--now first is class name then parameter which is inbuild for the main quarry  we want to choose any particular fields like type of badmintion/racket
+--that's why we have used modelschoicefield which helps to choose any one field in that we have wrote rackets.object.all() to retrieve whole data from the model 
+--the best thing of modelchoice field will make us dropdown to choose
+--it's now done to store the values now let's write to return
+	we will update the view we made early which was just returning the template we will add empty variable which will store user choice into that and we will keep it null
+	-after that we will check if the request given is post and if yes then we will select it from our form and procced with the request
+-- for that we will import our form in top of page with"from .forms import racketform"
+--so after that we will check if our given rq is valid (means that it is used ass racket name and everything)and available so we will return our query racket_type to check the value and if it is  cleaned value....
+and everything in syntax will look like this
+			************
+def all_rackets(request):
+    stores = None
+    if request.method == 'post':
+     form = racketform(request.post)
+     if form.is_valid():
+      racket_type = form.cleaned_data['racket_type']
+       stores =racket_type.objects.filter(rackets=racket_type)
+    else:
+        form = racketform()
+    return render(request, 'DBL/all_rackets.html', {'stores': stores ,'form':form})
+
+
+--stores is the value we get, confirm and pass to template
+-in short first we get the values from user check if we are actually getting any req. with the post method
+-after that we put req to our form which we created for racket type
+-after that we check if the gotten value is clean and as it is as rackets type model we wrote for types of racket also will check if form is valid
+-after the verification we will write the part where we get and match the value from rq of use with post and the available value form our model we will write "stores =racket_type.objects.filter(rackets=racket_type)" this will automatically filter the rq if it is available or not if yes then we have passed the variable with template it will show us there ,we have to pass also the whole form....
+-we missed the last and main part we showd the query for the value but if theres nothing so we will return ust the form using else
+like that
+-now in templates we simply extend layout with css and etcc..
+-then we added form tag to show forms after that we added our POST method added {%csrf_token%} for protection it's necessary and simply add button
+- main part loop 
+{% for type in rackets %}
+    <li>{{ type.name }} - {{ type.description }}</li>
+    {% endfor %}
+</ul>
+{% endif %} 
+type is name we create at the time and the racket is the parameter/value we passed with template.. 
+--small change  stores = chosen_racket.types.all()  changed the mehod cause it was not working,, in that we were calling the other model itself not the verifying type....
+
+
+NOTE-forms are complicated so have to go deep,Deep

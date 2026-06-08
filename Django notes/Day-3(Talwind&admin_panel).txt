@@ -1,0 +1,19 @@
+*Today's topic is how to install tailwind css in Django 
+(main point how to activate vnv - write .venv/scripts/activate )
+--now after you start you venv you have to install tailwind css using "pip install django-tailwind" command
+--for reloading browser you can install another Django pakage which is reload write in cmd "(pip install 'django-tailwind[reload]')"
+--after all that write the tailwind name in installed apps in your main settings.py with your other apps write'tailwind'
+--after that you have to run the tailwind run with "python manage.py tailwind init" it will ask you name for your tailiwind file so default name is theme but you can give anything
+--add this name to your app in settings.py with the tailwind and dbl.
+--so when you add everything now you have to install the tailwind app with "python manage.py tailwind install" now you can see theme folder on you files section
+-- open base.html from tamplates in theme and see the code 
+-- write your code anywhere in any templte you want but first you have to run tailwind like python in different terminal use two terminals
+-- for fast reload write 'django_browser_reload' in apps setting.py main app btw also add midelware for this at the last "django_browser_reload.middleware.BrowserReloadMiddleware",
+--add path in url.py in main app "path("__reload__/", include("django_browser_reload.urls")),"
+
+*admin panel 
+	--you have to first migrate data into db just write "python manage.py migrate"
+ 	--then you have to create super user for your self
+		-so write command in cmd "python manage.py createsuperuser" 
+			.it will ask you for the password, name, email etc details
+	--now after creating super user go to the website and write in url /admin then login simple.. 

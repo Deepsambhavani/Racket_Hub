@@ -1,0 +1,8 @@
+#found to many errors
+--had to delete the whole venev cause it was giving too much trouble
+--installed everthing with the help of notes and started venv and tailwind with app server
+--still there was a big issue that the tailwind was running but the main css logic was not
+--found out that i was just a small structural error but had to fight to much for it 
+	-just putted the link of css file in the title tag😅😅
+	-also had wrote the tailwind_css block after the css link it was overriding the css effect 
+  so simple but took too much of my time had to wait for another day to solve it btw.. peace out🫰🏻🫰🏻

@@ -1,0 +1,9 @@
+hey there,
+-today i have almost completed the project it's time to apply css style & make design look good
+-we have piked orange and black thing which looks quite good and treading..
+-made different pages for shop,all rackets and to show price full details etc..
+-there was one best thing that happned with me is i wanted to create a card which pop ups when any one click on rackets view details so i was confused before how to do it do i transfer people to different page or what..
+-so i created a different page for view but when i went to add url so i showd me suggestion like be on same page with different name like this " path('racket_shop/<int:racket_id>/', views.buy_racket, name='view_racket')"... the Django new what i was trying to do i was the best thing and feature i liked it so much it gives us option to search on same page with all details..
+-i just entered this url and there was no need to make different page or add view,model nothing just one single line and it's djnago's magic
+-today we have also added project to git hub now will give it final touch and post it on linkdin..
+-let's design view page and add there reviews to the page

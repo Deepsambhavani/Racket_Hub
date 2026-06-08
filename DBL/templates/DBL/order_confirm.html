@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+{% block title %}Order Placed! — RacketHub{% endblock %}
+
+{% block content %}
+<style>
+    :root { --clr-bg:#080a0f; --clr-card:#141820; --clr-border:rgba(255,255,255,0.06); --clr-accent:#e8452a; --clr-accent2:#f5a623; --clr-text:#e8eaf0; --clr-muted:#6b7280; }
+    .confirm-page { min-height:calc(100vh - 64px); display:flex; align-items:center; justify-content:center; padding:3rem 2rem; }
+    .confirm-card { background:var(--clr-card); border:1px solid var(--clr-border); border-radius:24px; padding:3rem; max-width:560px; width:100%; text-align:center; }
+    .tick { width:72px; height:72px; background:rgba(34,197,94,0.1); border:2px solid rgba(34,197,94,0.3); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2rem; margin:0 auto 1.5rem; }
+    .confirm-title { font-family:'Bebas Neue',sans-serif; font-size:2.8rem; color:#fff; letter-spacing:0.03em; }
+    .confirm-sub { color:var(--clr-muted); font-size:0.9rem; margin-top:0.5rem; line-height:1.6; }
+    .order-details { background:rgba(255,255,255,0.03); border:1px solid var(--clr-border); border-radius:14px; padding:1.5rem; margin:2rem 0; text-align:left; }
+    .detail-row { display:flex; justify-content:space-between; font-size:0.85rem; padding:0.4rem 0; border-bottom:1px solid var(--clr-border); }
+    .detail-row:last-child { border-bottom:none; }
+    .detail-label { color:var(--clr-muted); }
+    .detail-value { color:var(--clr-text); font-weight:600; }
+    .racket-name-confirm { font-weight:700; color:var(--clr-accent2); }
+    .btn-home { display:inline-block; background:var(--clr-accent); color:#fff; text-decoration:none; font-size:0.8rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.85rem 2rem; border-radius:10px; margin-top:0.5rem; transition:background 0.2s; }
+    .btn-home:hover { background:#c93820; }
+    .btn-shop { display:inline-block; background:rgba(255,255,255,0.05); border:1px solid var(--clr-border); color:var(--clr-muted); text-decoration:none; font-size:0.8rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:0.85rem 2rem; border-radius:10px; margin-top:0.5rem; margin-left:0.75rem; transition:background 0.2s; }
+    .btn-shop:hover { background:rgba(255,255,255,0.08); color:var(--clr-text); }
+</style>
+
+<div class="confirm-page">
+    <div class="confirm-card">
+        <div class="tick">✓</div>
+        <div class="confirm-title">Order Placed!</div>
+        <p class="confirm-sub">Thank you, <strong>{{ order.full_name }}</strong>! Your order has been received and will be dispatched within 24 hours.</p>
+
+        <div class="order-details">
+            <div class="detail-row">
+                <span class="detail-label">Racket</span>
+                <span class="detail-value racket-name-confirm">{{ racket.name }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Amount</span>
+                <span class="detail-value">₹{{ racket.pricing }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Payment</span>
+                <span class="detail-value">{{ order.payment_method|upper }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Delivery To</span>
+                <span class="detail-value">{{ order.city }}, {{ order.state }} — {{ order.pincode }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Phone</span>
+                <span class="detail-value">{{ order.phone }}</span>
+            </div>
+        </div>
+
+        <a href="/" class="btn-home">Back to Home</a>
+        <a href="/DBL/" class="btn-shop">Shop More</a>
+    </div>
+</div>
+{% endblock %}
