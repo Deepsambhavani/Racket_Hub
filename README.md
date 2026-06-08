@@ -58,7 +58,7 @@ source .venv/bin/activate     # Mac/Linux
 
 **3. Install dependencies**
 ```bash
-pip install django pillow django-tailwind django-browser-reload
+pip install -r requirements.txt
 ```
 
 **4. Run migrations**
